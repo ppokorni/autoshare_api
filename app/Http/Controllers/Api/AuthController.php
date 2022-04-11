@@ -30,6 +30,7 @@ class AuthController extends Controller {
                     'user' => (object) [
                         'email' => $user->email,
                         'name' => $user->name,
+                        'surname' => $user->surname,
                     ],
                     'token' => $token->plainTextToken
                 ], 200);
@@ -46,13 +47,13 @@ class AuthController extends Controller {
     }
 
     //register function that uses Sanctum to create a token, returns a json response
-    public function register(Request $request)
-    {
+    public function register(Request $request) {
         try {
             $validatedData = $request->validate([
                 'email' => 'required|email',
                 'password' => 'required|min:6',
-                'name' => 'nullable'
+                'name' => 'nullable',
+                'surname' => 'nullable',
             ]);
 
             $credentials = request(['email', 'password']);
@@ -66,6 +67,7 @@ class AuthController extends Controller {
             $user = User::create([
                 'email' => $credentials['email'],
                 'name' => $request->name ?? "",
+                'surname' => $request->surname ?? "",
                 'password' => bcrypt($credentials['password'])
             ]);
 
@@ -75,6 +77,7 @@ class AuthController extends Controller {
                 'user' => (object) [
                         'email' => $user->email,
                         'name' => $user->name,
+                        'surname' => $user->surname,
                 ],
                 'token' => $token->plainTextToken
             ], 200);
