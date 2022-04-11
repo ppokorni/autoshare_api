@@ -19,5 +19,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::get('/users/{user_id}', [\App\Http\Controllers\UserController::class, 'show'])->name('users.show');
+Route::post('/users/{user_id}', [\App\Http\Controllers\UserController::class, 'update'])->name('users.update');
+
 Route::post('auth/login', [\App\Http\Controllers\Api\AuthController::class, 'login']);
 Route::post('auth/register', [\App\Http\Controllers\Api\AuthController::class, 'register']);
