@@ -23,6 +23,7 @@ class Vehicle extends Model {
         'cost_per_kilometer'
     ];
 
+    // Get formatted attributes
     protected $appends = [
         'rating_avg'
     ];
@@ -37,6 +38,7 @@ class Vehicle extends Model {
         return $this->belongsTo(User::class, 'owner_id');
     }
 
+    // Define one-to-one relation for vehicles
     public function vehicleFeatures() {
         return $this->hasOne(VehicleFeatures::class);
     }
