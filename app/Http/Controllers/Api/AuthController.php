@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -27,11 +28,7 @@ class AuthController extends Controller {
                 $user = auth()->user();
                 $token = $user->createToken('authToken');
                 return response()->json([
-                    'user' => (object) [
-                        'email' => $user->email,
-                        'name' => $user->name,
-                        'surname' => $user->surname,
-                    ],
+                    'user' => new UserResource($user),
                     'token' => $token->plainTextToken
                 ], 200);
             } else {
@@ -74,11 +71,7 @@ class AuthController extends Controller {
             $token = $user->createToken('authToken');
             DB::commit();
             return response()->json([
-                'user' => (object) [
-                        'email' => $user->email,
-                        'name' => $user->name,
-                        'surname' => $user->surname,
-                ],
+                'user' => new UserResource($user),
                 'token' => $token->plainTextToken
             ], 200);
 
