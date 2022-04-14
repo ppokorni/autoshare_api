@@ -17,7 +17,7 @@ class CreateVehiclesTable extends Migration {
             $table->string('brand');
             $table->string('model');
             $table->smallInteger('year');
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->string('licence_plate');
             $table->date('registered_until');
             $table->float('rent_cost')->nullable();
