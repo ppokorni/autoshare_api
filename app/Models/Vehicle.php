@@ -20,19 +20,20 @@ class Vehicle extends Model {
         'registered_until',
         'rent_cost',
         'daily_distance_limit',
-        'cost_per_kilometer'
+        'cost_per_kilometer',
+        'rating_avg'
     ];
-
+/*
     // Get formatted attributes
     protected $appends = [
         'rating_avg'
     ];
 
-    // Format vehicle's rating
+    // Format vehicle rating
     public function getRatingAvgAttribute($value) {
         return number_format($value, 2);
     }
-
+*/
     // Define many-to-one relation for users
     public function user() {
         return $this->belongsTo(User::class, 'owner_id');

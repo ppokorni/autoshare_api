@@ -11,6 +11,7 @@ class VehicleFeatures extends Model {
     protected $primaryKey = 'vehicle_id';
 
     protected $fillable = [
+        'vehicle_id',
         'transmission',
         'type',
         'heated_seats',
