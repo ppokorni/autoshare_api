@@ -20,9 +20,9 @@ class CreateVehiclesTable extends Migration {
             $table->text('description');
             $table->string('licence_plate');
             $table->date('registered_until');
-            $table->float('rent_cost');
-            $table->float('daily_distance_limit');
-            $table->float('cost_per_kilometer');
+            $table->float('rent_cost')->nullable();
+            $table->float('daily_distance_limit')->nullable();
+            $table->float('cost_per_kilometer')->nullable();
             $table->float('rating_avg');
             $table->timestamps();
         });

@@ -15,22 +15,22 @@ class CreateVehicleFeaturesTable extends Migration
     {
         Schema::create('vehicle_features', function (Blueprint $table) {
             $table->foreignId('vehicle_id')->constrained('vehicles', 'vehicle_id');
-            $table->string('transmission');
-            $table->string('type');
-            $table->boolean('heated_seats');
-            $table->boolean('ac');
-            $table->boolean('aux');
-            $table->string('colour');
-            $table->string('drivetrain');
-            $table->float('horsepower');
-            $table->float('fuel_capacity');
-            $table->string('fuel_type');
-            $table->string('tyres');
-            $table->float('avg_consumption');
-            $table->boolean('wheelchair');
-            $table->boolean('child_seat');
-            $table->boolean('backup_camera');
-            $table->string('parking_sensors');
+            $table->string('transmission')->nullable();
+            $table->string('type')->nullable();
+            $table->boolean('heated_seats')->nullable();
+            $table->boolean('ac')->nullable();
+            $table->boolean('aux')->nullable();
+            $table->string('colour')->nullable();
+            $table->string('drivetrain')->nullable();
+            $table->float('horsepower')->nullable();
+            $table->float('fuel_capacity')->nullable();
+            $table->string('fuel_type')->nullable();
+            $table->string('tyres')->nullable();
+            $table->float('avg_consumption')->nullable();
+            $table->boolean('wheelchair')->nullable();
+            $table->boolean('child_seat')->nullable();
+            $table->boolean('backup_camera')->nullable();
+            $table->string('parking_sensors')->nullable();
             $table->timestamps();
         });
     }
