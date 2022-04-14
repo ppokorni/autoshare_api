@@ -23,7 +23,7 @@ class CreateVehiclesTable extends Migration {
             $table->float('rent_cost')->nullable();
             $table->float('daily_distance_limit')->nullable();
             $table->float('cost_per_kilometer')->nullable();
-            $table->float('rating_avg');
+            $table->float('rating_avg')->nullable();
             $table->timestamps();
         });
     }
