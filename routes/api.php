@@ -20,6 +20,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::post('auth/login', [\App\Http\Controllers\Api\AuthController::class, 'login']);
 Route::post('auth/register', [\App\Http\Controllers\Api\AuthController::class, 'register']);
-Route::get('/vehicles/list', [\App\Http\Controllers\Api\VehicleController::class, 'index']);
+Route::get('vehicles/list', [\App\Http\Controllers\Api\VehicleController::class, 'index']);
 Route::get('vehicles/{id}', [\App\Http\Controllers\Api\VehicleController::class, 'getById']);
 Route::post('vehicles/create', [\App\Http\Controllers\Api\VehicleController::class, 'store']);
+Route::post('vehicles/update/{id}', [\App\Http\Controllers\Api\VehicleController::class, 'update']);

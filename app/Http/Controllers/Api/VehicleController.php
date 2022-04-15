@@ -28,7 +28,7 @@ class VehicleController extends Controller {
         $vehicle = DB::table('vehicles')
             ->join('vehicle_features', 'vehicles.vehicle_id', '=', 'vehicle_features.vehicle_id')
             ->where('vehicles.vehicle_id', $id)
-            ->get();
+            ->first();
 
         return response()->json($vehicle, 200);
     }
@@ -57,6 +57,35 @@ class VehicleController extends Controller {
             $vehicleFeatures = array_merge(['vehicle_id' => $vehicle->vehicle_id], $featureFields);
             $this->vehicleFeatureService->store($vehicleFeatures);
             DB::commit();
+
+            return response()->json($vehicle, 200);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->errors()], 400);
+        }
+    }
+
+    // Function that updates vehicle and vehicle features in database
+    public function update(Request $request, $id) {
+        try {
+            $validatedFields = $request->validate([
+                'description' => 'nullable',
+                'licence_plate' => 'nullable',
+                'registered_until' => 'nullable',
+                'rent_cost' => 'nullable',
+                'daily_distance_limit' => 'nullable',
+                'cost_per_kilometer' => 'nullable',
+                'rating_avg' => 'nullable'
+            ]);
+
+            DB::beginTransaction();
+            $vehicle = Vehicle::findOrFail($id)->update($validatedFields);
+            $this->vehicleFeatureService->update($request, $id);
+            DB::commit();
+
+            $vehicle = DB::table('vehicles')
+                ->join('vehicle_features', 'vehicles.vehicle_id', '=', 'vehicle_features.vehicle_id')
+                ->where('vehicles.vehicle_id', $id)
+                ->first();
 
             return response()->json($vehicle, 200);
         } catch (ValidationException $e) {
