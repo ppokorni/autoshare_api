@@ -53,6 +53,12 @@ class User extends Authenticatable {
 
     // Define many-to-one relation for vehicles
     public function vehicles() {
-        $this->hasMany(Vehicle::class);
+        return $this->hasMany(Vehicle::class, 'owner_id');
     }
+
+    // Define many-to-many relation for availabilities
+    public function availabilities() {
+        return $this->belongsToMany(Availability::class, 'rents', 'user_id', 'availability_id');
+    }
+
 }
