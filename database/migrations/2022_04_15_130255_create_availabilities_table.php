@@ -15,15 +15,15 @@ class CreateAvailabilitiesTable extends Migration
     {
         Schema::create('availabilities', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('vehicle_id');
+            $table->unsignedBigInteger('vehicle_id')->nullable();
             $table->dateTime('start_time');
             $table->dateTime('end_time');
             $table->float('latitude');
             $table->float('longitude');
             $table->timestamps();
 
-            // Foreign key constraints (when deleting a vehicle, delete all its availabilities)
-            $table->foreign('vehicle_id')->references('id')->on('vehicles')->onDelete('cascade');
+            // Foreign key constraints (when deleting a vehicle, nullify its availabilities)
+            $table->foreign('vehicle_id')->references('vehicle_id')->on('vehicles')->onDelete('set null');
         });
     }
 
