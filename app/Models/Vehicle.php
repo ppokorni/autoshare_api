@@ -46,6 +46,6 @@ class Vehicle extends Model {
 
     //availabilities many-to-one relation
     public function availabilities() {
-        return $this->hasMany(Availability::class);
+        return $this->hasMany(Availability::class, 'vehicle_id', 'vehicle_id');
     }
 }
