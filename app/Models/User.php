@@ -50,4 +50,9 @@ class User extends Authenticatable {
     public function getRenteeAvgRatingAttribute($value) {
         return number_format($value, 2);
     }
+
+    // Define many-to-one relation for vehicles
+    public function vehicles() {
+        $this->hasMany(Vehicle::class);
+    }
 }
