@@ -15,4 +15,9 @@ class Availability extends Model
     public function vehicle() {
         return $this->belongsTo(Vehicle::class);
     }
+
+    //users many-to-many relationship
+    public function users() {
+        return $this->belongsToMany(User::class, 'rents', 'availability_id', 'user_id');
+    }
 }
