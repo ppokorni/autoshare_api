@@ -27,3 +27,12 @@ Route::get('vehicles/list', [\App\Http\Controllers\Api\VehicleController::class,
 Route::get('vehicles/{id}', [\App\Http\Controllers\Api\VehicleController::class, 'getById']);
 Route::post('vehicles/create', [\App\Http\Controllers\Api\VehicleController::class, 'store']);
 Route::post('vehicles/update/{id}', [\App\Http\Controllers\Api\VehicleController::class, 'update']);
+
+Route::get('availabilities', [\App\Http\Controllers\Api\AvailabilityController::class, 'index']);
+Route::post('availabilities', [\App\Http\Controllers\Api\AvailabilityController::class, 'store']);
+Route::get('availabilities/{id}', [\App\Http\Controllers\Api\AvailabilityController::class, 'show']);
+Route::post('availabilities/{id}', [\App\Http\Controllers\Api\AvailabilityController::class, 'update']);
+Route::post('availabilities/{id}/delete', [\App\Http\Controllers\Api\AvailabilityController::class, 'destroy']);
+
+
+
