@@ -13,7 +13,7 @@ class Availability extends Model
 
     //vehicle relationship
     public function vehicle() {
-        return $this->belongsTo(Vehicle::class);
+        return $this->belongsTo(Vehicle::class, 'vehicle_id');
     }
 
     //users many-to-many relationship
