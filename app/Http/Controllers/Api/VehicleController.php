@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Vehicle;
 use App\Services\VehicleFeatureService;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Nette\Schema\ValidationException;
 
@@ -96,24 +98,26 @@ class VehicleController extends Controller {
 
 
     // Function searches vehicles based on availability, location and features
+    // TODO: Add filters
     public function search(Request $request) {
 
-        $validatedFields = $request->validate([
-            'latitude' => 'required|numeric|min:-90|max:90',
-            'longitude' => 'required|numeric|min:-180|max:180',
-            'radius' => 'required|numeric',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date'
-        ]);
+        try {
+            $validatedFields = $request->validate([
+                'latitude' => 'required|numeric|min:-90|max:90',
+                'longitude' => 'required|numeric|min:-180|max:180',
+                'radius' => 'required|numeric',
+                'start_date' => 'required|date',
+                'end_date' => 'required|date'
+            ]);
 
-        $latpoint = $validatedFields['latitude'];
-        $longpoint = $validatedFields['longitude'];
-        $radius = $validatedFields['radius'];
-        $start_date = Carbon::parse($validatedFields['start_date'])->startOfDay();
-        $end_date = Carbon::parse($validatedFields['end_date'])->endOfDay();
+            $latpoint = $validatedFields['latitude'];
+            $longpoint = $validatedFields['longitude'];
+            $radius = $validatedFields['radius'];
+            $start_date = Carbon::parse($validatedFields['start_date'])->startOfDay();
+            $end_date = Carbon::parse($validatedFields['end_date'])->endOfDay();
 
-        // Query taken from http://www.plumislandmedia.net/mysql/haversine-mysql-nearest-loc/
-        $vehicles = DB::select(DB::raw("
+            // Query taken from http://www.plumislandmedia.net/mysql/haversine-mysql-nearest-loc/
+            $vehicles = DB::select(DB::raw("
                     SELECT *
                     FROM (
                         SELECT v.*, vf.*,
@@ -141,10 +145,17 @@ class VehicleController extends Controller {
                               AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
                         ) AS d
                         WHERE distance <= radius
-                        AND d.start_time <= '$start_date'
-                        AND d.end_time >= '$end_date'
+                          AND d.start_time <= '$start_date'
+                          AND d.end_time >= '$end_date'
                         ORDER BY distance
                      "));
-        return response()->json($vehicles, 200);
+            return response()->json($vehicles, 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => $e->getMessage()], 404);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['error' => implode(', ', Arr::collapse($e->errors()))], 400);
+        } catch (\Throwable $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }
