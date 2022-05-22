@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Vehicle;
 use App\Services\VehicleFeatureService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Nette\Schema\ValidationException;
@@ -96,42 +97,53 @@ class VehicleController extends Controller {
 
     // Function searches vehicles based on availability, location and features
     public function search(Request $request) {
-//        $vehicles = DB::table('vehicles')
-//            ->join('vehicle_features', 'vehicles.vehicle_id', '=', 'vehicle_features.vehicle_id')
-//            ->join('availabilities', 'vehicles.vehicle_id', 'availabilities.vehicle_id')
-//            ->get();
-        $latpoint = 45;
-        $longpoint = 15;
-        $radius = 200;
+
+        $validatedFields = $request->validate([
+            'latitude' => 'required|numeric|min:-90|max:90',
+            'longitude' => 'required|numeric|min:-180|max:180',
+            'radius' => 'required|numeric',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date'
+        ]);
+
+        $latpoint = $validatedFields['latitude'];
+        $longpoint = $validatedFields['longitude'];
+        $radius = $validatedFields['radius'];
+        $start_date = Carbon::parse($validatedFields['start_date'])->startOfDay();
+        $end_date = Carbon::parse($validatedFields['end_date'])->endOfDay();
 
         // Query taken from http://www.plumislandmedia.net/mysql/haversine-mysql-nearest-loc/
         $vehicles = DB::select(DB::raw("
                     SELECT *
-                      FROM (
-                     SELECT a.vehicle_id,
-                            a.start_time, a.end_time,
-                            a.latitude, a.longitude,
-                            p.radius,
-                            p.distance_unit
-                                     * DEGREES(ACOS(LEAST(1.0, COS(RADIANS(p.latpoint))
-                                     * COS(RADIANS(a.latitude))
-                                     * COS(RADIANS(p.longpoint - a.longitude))
-                                     + SIN(RADIANS(p.latpoint))
-                                     * SIN(RADIANS(a.latitude))))) AS distance
-                      FROM availabilities AS a
-                      JOIN (   /* parametri upita */
-                            SELECT  $latpoint  AS latpoint,  $longpoint AS longpoint,
-                                    $radius AS radius,      111.045 AS distance_unit
-                        ) AS p ON 1=1
-                      WHERE a.latitude
-                         BETWEEN p.latpoint  - (p.radius / p.distance_unit)
-                             AND p.latpoint  + (p.radius / p.distance_unit)
-                        AND a.longitude
-                         BETWEEN p.longpoint - (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
-                             AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
-                     ) AS d
-                     WHERE distance <= radius
-                     ORDER BY distance
+                    FROM (
+                        SELECT v.*, vf.*,
+                               a.start_time, a.end_time,
+                               a.latitude, a.longitude,
+                               p.radius,
+                               p.distance_unit
+                                    * DEGREES(ACOS(LEAST(1.0, COS(RADIANS(p.latpoint))
+                                    * COS(RADIANS(a.latitude))
+                                    * COS(RADIANS(p.longpoint - a.longitude))
+                                    + SIN(RADIANS(p.latpoint))
+                                    * SIN(RADIANS(a.latitude))))) AS distance
+                        FROM availabilities AS a
+                            JOIN vehicles v on v.vehicle_id = a.vehicle_id
+                            JOIN vehicle_features vf on a.vehicle_id = vf.vehicle_id
+                        JOIN (   /* parametri upita */
+                            SELECT $latpoint  AS latpoint,  $longpoint AS longpoint,
+                                   $radius AS radius,      111.045 AS distance_unit
+                            ) AS p ON 1=1
+                        WHERE a.latitude
+                            BETWEEN p.latpoint  - (p.radius / p.distance_unit)
+                            AND p.latpoint  + (p.radius / p.distance_unit)
+                          AND a.longitude
+                              BETWEEN p.longpoint - (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
+                              AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
+                        ) AS d
+                        WHERE distance <= radius
+                        AND d.start_time <= '$start_date'
+                        AND d.end_time >= '$end_date'
+                        ORDER BY distance
                      "));
         return response()->json($vehicles, 200);
     }
