@@ -5,10 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Vehicle;
 use App\Services\VehicleFeatureService;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Nette\Schema\ValidationException;
 

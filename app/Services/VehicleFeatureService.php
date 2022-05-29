@@ -25,7 +25,7 @@ class VehicleFeatureService {
             'wheelchair' => 'nullable',
             'child_seat' => 'nullable',
             'backup_camera' => 'nullable',
-            'parking_sensors'
+            'parking_sensors' => 'nullable'
         ]);
 
         VehicleFeatures::findOrFail($id)->update($validatedFields);

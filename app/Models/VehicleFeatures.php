@@ -14,6 +14,8 @@ class VehicleFeatures extends Model {
         'vehicle_id',
         'transmission',
         'type',
+        'door_count',
+        'seat_count',
         'heated_seats',
         'ac',
         'aux',
