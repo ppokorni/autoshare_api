@@ -35,5 +35,4 @@ Route::get('availabilities/{id}', [\App\Http\Controllers\Api\AvailabilityControl
 Route::post('availabilities/{id}', [\App\Http\Controllers\Api\AvailabilityController::class, 'update']);
 Route::post('availabilities/{id}/delete', [\App\Http\Controllers\Api\AvailabilityController::class, 'destroy']);
 
-
-
+Route::post('rent', [\App\Http\Controllers\Api\RentController::class, 'store']);
