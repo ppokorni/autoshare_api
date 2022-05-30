@@ -41,8 +41,6 @@ class VehicleController extends Controller {
                 'brand' => 'required',
                 'model' => 'required',
                 'year' => 'required',
-                'door_count' => 'required|numeric',
-                'seat_count' => 'required|numeric',
                 'description' => 'nullable',
                 'licence_plate' => 'required',
                 'registered_until' => 'required',
