@@ -22,7 +22,8 @@ class ImageService {
     }
 
     // Encodes image to base64
-    public function encodeImage($image): string {
+    public function encodeImage($image): ?string {
+        if (!file_exists($image)) return null;
         $data = file_get_contents($image);
         return base64_encode($data);
     }
