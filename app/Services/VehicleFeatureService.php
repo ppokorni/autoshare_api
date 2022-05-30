@@ -15,8 +15,8 @@ class VehicleFeatureService {
     // Function that updates vehicle's features in the database
     public function update(Request $request, $id) {
         $validatedFields = $request->validate([
-            'door_count' => 'required|numeric',
-            'seat_count' => 'required|numeric',
+            'door_count' => 'nullable',
+            'seat_count' => 'nullable',
             'heated_seats' => 'nullable',
             'ac' => 'nullable',
             'aux' => 'nullable',
