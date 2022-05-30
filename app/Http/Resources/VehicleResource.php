@@ -24,6 +24,9 @@ class VehicleResource extends JsonResource {
             "licence_plate" => $this->licence_plate,
             "registered_until" => $this->registered_until,
             "rating_avg" => $this->rating_avg,
+            "rent_cost" => $this->rent_cost,
+            "daily_distance_limit" => $this->daily_distance_limit,
+            "cost_per_kilometer" => $this->cost_per_kilometer,
             "image" => $this->extra->image
         ];
     }
