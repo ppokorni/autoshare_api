@@ -9,7 +9,20 @@ class Availability extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $primaryKey = 'id';
+
+    protected $fillable = [
+        'vehicle_id',
+        'start_time',
+        'end_time',
+        'latitude',
+        'longitude'
+    ];
+
+    protected $dates = [
+        'start_time',
+        'end_time',
+    ];
 
     //vehicle relationship
     public function vehicle() {
