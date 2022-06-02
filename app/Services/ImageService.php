@@ -27,4 +27,11 @@ class ImageService {
         $data = file_get_contents($image);
         return base64_encode($data);
     }
+
+    // Deletes image if present
+    public function destroyImage($image) {
+        if (file_exists($image)) {
+            unlink($image);
+        }
+    }
 }

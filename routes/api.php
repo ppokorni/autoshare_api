@@ -26,6 +26,8 @@ Route::post('auth/register', [\App\Http\Controllers\Api\AuthController::class, '
 Route::get('vehicles/list', [\App\Http\Controllers\Api\VehicleController::class, 'index']);
 Route::get('vehicles/search', [\App\Http\Controllers\Api\VehicleController::class, 'search']);
 Route::get('vehicles/{id}', [\App\Http\Controllers\Api\VehicleController::class, 'getById']);
+Route::get('vehicles/user/{id}', [\App\Http\Controllers\Api\VehicleController::class, 'getUserVehicles']);
+Route::post('vehicles/{id}/delete', [\App\Http\Controllers\Api\VehicleController::class, 'destroy']);
 Route::post('vehicles/create', [\App\Http\Controllers\Api\VehicleController::class, 'store']);
 Route::post('vehicles/update/{id}', [\App\Http\Controllers\Api\VehicleController::class, 'update']);
 
