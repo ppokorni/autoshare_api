@@ -3,26 +3,37 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\VehicleFullResource;
+use App\Http\Resources\VehicleResource;
+use App\Http\Resources\VehicleSearchResource;
 use App\Models\Vehicle;
+use App\Services\ImageService;
 use App\Services\VehicleFeatureService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Nette\Schema\ValidationException;
+use Illuminate\Validation\ValidationException;
 
 class VehicleController extends Controller {
     protected $vehicleFeatureService;
+    protected $imageService;
 
     // Dependency injection via constructor
-    public function __construct(VehicleFeatureService $vehicleFeatureService) {
+    public function __construct(VehicleFeatureService $vehicleFeatureService, ImageService $imageService) {
         $this->vehicleFeatureService = $vehicleFeatureService;
+        $this->imageService = $imageService;
     }
 
     // Function that lists all vehicles in database
     public function index() {
         $vehicles = Vehicle::all();
-        return response()->json($vehicles, 200);
+        foreach ($vehicles as $vehicle) {
+            $image = "storage/vehicles/$vehicle->vehicle_id.png";
+            $encoded_image = $this->imageService->encodeImage($image);
+            $vehicle->extra = (object) ['image' => $encoded_image];
+        }
+        return VehicleResource::collection($vehicles)->response();
     }
 
     // Function that gets vehicle with features from id
@@ -31,8 +42,11 @@ class VehicleController extends Controller {
             ->join('vehicle_features', 'vehicles.vehicle_id', '=', 'vehicle_features.vehicle_id')
             ->where('vehicles.vehicle_id', $id)
             ->first();
+        $image = "storage/vehicles/$vehicle->vehicle_id.png";
+        $encoded_image = $this->imageService->encodeImage($image);
+        $vehicle->extra = (object) ['image' => $encoded_image];
 
-        return response()->json($vehicle, 200);
+        return VehicleFullResource::make($vehicle)->response();
     }
 
     // Function that stores vehicle with features into database
@@ -60,7 +74,17 @@ class VehicleController extends Controller {
             $this->vehicleFeatureService->store($vehicleFeatures);
             DB::commit();
 
-            return response()->json($vehicle, 200);
+            // Store base64 encoded image
+            if ($request->has('image')) {
+                $image = $request['image'];
+                $path = "storage/vehicles";
+                $id = $vehicle->vehicle_id;
+
+                $this->imageService->storeImage($image, $path, $id);
+                $vehicle->extra = (object) ['image' => $image];
+            }
+
+            return VehicleResource::make($vehicle)->response();
         } catch (ValidationException $e) {
             return response()->json(['error' => $e->errors()], 400);
         }
@@ -89,7 +113,17 @@ class VehicleController extends Controller {
                 ->where('vehicles.vehicle_id', $id)
                 ->first();
 
-            return response()->json($vehicle, 200);
+            // Store base64 encoded image
+            if ($request->has('image')) {
+                $image = $request['image'];
+                $path = "storage/vehicles";
+                $id = $vehicle->vehicle_id;
+
+                $this->imageService->storeImage($image, $path, $id);
+                $vehicle->extra = (object) ['image' => $image];
+            }
+
+            return VehicleFullResource::make($vehicle)->response();
         } catch (ValidationException $e) {
             return response()->json(['error' => $e->errors()], 400);
         }
@@ -148,10 +182,17 @@ class VehicleController extends Controller {
                           AND d.end_time >= '$end_date'
                         ORDER BY distance
                      "));
-            return response()->json($vehicles, 200);
+
+            foreach ($vehicles as $vehicle) {
+                $image = "storage/vehicles/$vehicle->vehicle_id.png";
+                $encoded_image = $this->imageService->encodeImage($image);
+                $vehicle->extra = (object) ['image' => $encoded_image];
+            }
+
+            return VehicleSearchResource::collection($vehicles)->response();
         } catch (ModelNotFoundException $e) {
             return response()->json(['error' => $e->getMessage()], 404);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json(['error' => implode(', ', Arr::collapse($e->errors()))], 400);
         } catch (\Throwable $e) {
             return response()->json(['error' => $e->getMessage()], 500);
