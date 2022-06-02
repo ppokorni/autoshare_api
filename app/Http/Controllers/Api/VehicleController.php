@@ -7,6 +7,7 @@ use App\Http\Resources\VehicleFullResource;
 use App\Http\Resources\VehicleResource;
 use App\Http\Resources\VehicleSearchResource;
 use App\Models\Vehicle;
+use App\Models\VehicleFeatures;
 use App\Services\ImageService;
 use App\Services\VehicleFeatureService;
 use Carbon\Carbon;
@@ -143,6 +144,7 @@ class VehicleController extends Controller {
 
     public function destroy($id) {
         try {
+            VehicleFeatures::destroy($id);
             Vehicle::destroy($id);
             $this->imageService->destroyImage($this->image_directory."/$id.png");
 
