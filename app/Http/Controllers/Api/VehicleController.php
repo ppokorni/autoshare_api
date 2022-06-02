@@ -49,6 +49,17 @@ class VehicleController extends Controller {
         return VehicleFullResource::make($vehicle)->response();
     }
 
+    // Function that lists all vehicles belonging to one user
+    public function getUserVehicles($id) {
+        $vehicles = Vehicle::where('owner_id', $id)->get();
+        foreach ($vehicles as $vehicle) {
+            $image = "storage/vehicles/$vehicle->vehicle_id.png";
+            $encoded_image = $this->imageService->encodeImage($image);
+            $vehicle->extra = (object) ['image' => $encoded_image];
+        }
+        return VehicleResource::collection($vehicles)->response();
+    }
+
     // Function that stores vehicle with features into database
     public function store(Request $request) {
         try {
