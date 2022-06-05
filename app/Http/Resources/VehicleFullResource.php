@@ -27,7 +27,7 @@ class VehicleFullResource extends JsonResource {
             "rent_cost" => $this->rent_cost,
             "daily_distance_limit" => $this->daily_distance_limit,
             "cost_per_kilometer" => $this->cost_per_kilometer,
-            "image" => $this->extra->image,
+            "image" => isset($this->extra) ? $this->extra->image : null,
             "transmission" => $this->transmission,
             "type" => $this->type,
             "door_count" => $this->door_count,
