@@ -29,7 +29,7 @@ class VehicleSearchResource extends JsonResource {
             "latitude" => $this->latitude,
             "longitude" => $this->longitude,
             "distance" => $this->distance,
-            "image" => property_exists($this, 'extra') ? $this->extra->image : null
+            "image" => isset($this->extra) ? $this->extra->image : null
         ];
     }
 }
