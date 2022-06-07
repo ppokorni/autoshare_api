@@ -60,11 +60,6 @@ jobs:
         env:
           DB_PORT: ${{ job.services.postgres.ports[5432] }}
 
-      - name: Test with phpunit
-        run: vendor/bin/phpunit ./tests/ --coverage-text
-        env:
-          DB_PORT: ${{ job.services.postgres.ports[5432] }}
-
       - name: Test artisan commands
         run: php artisan test
         env:
